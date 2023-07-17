@@ -1,2 +1,2 @@
-# book-kart
-Nodejs, Express based Ecommerce
+# Book Kart
+## Nodejs, Express based Ecommerce
