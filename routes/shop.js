@@ -5,7 +5,7 @@ const router = express.Router();
 
 const adminData = require("./admin");
 
-// handlebars route
+// handlebars/ejs route
 router.get("/", (req, res, next) => {
   const products = adminData.products;
   res.render("shop", {

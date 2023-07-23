@@ -7,7 +7,7 @@ const rootdir = require("../utils/path");
 
 const products = [];
 
-// handlebar
+// handlebar/ejs
 router.get("/add-product", (req, res, next) => {
   // res.sendFile(path.join(rootdir, "views", "add-product.html"));
   res.render("add-product", {

@@ -2,19 +2,18 @@ const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const { engine } = require("express-handlebars");
+// const { engine } = require("express-handlebars");
 
 const app = express();
 
-// handlebars
-app.engine(
-  "hbs",
-  engine({
-    layoutsDir: "views/layouts",
-    defaultLayout: "main-layout",
-    extname: ".hbs",
-  })
-);
+// app.engine(
+//   "hbs",
+//   engine({
+//     layoutsDir: "views/layouts",
+//     defaultLayout: "main-layout",
+//     extname: ".hbs",
+//   })
+// );
 
 const rootdir = require("./utils/path");
 
@@ -24,8 +23,11 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootdir, "public")));
 
+// ejs
+app.set("view engine", "ejs");
+
 // handlebars
-app.set("view engine", "hbs");
+// app.set("view engine", "hbs");
 
 // pug
 // app.set("view engine", "pug");
@@ -36,7 +38,7 @@ app.use("/admin", adminRoutes.routes);
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
-  res.status(404).render("404", { pageTitle: "Page not found" });
+  res.status(404).render("404", { pageTitle: "Page not found", path: "*" });
 });
 
 app.listen(3000);
