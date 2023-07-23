@@ -1,10 +1,20 @@
-const express = require("express");
-
 const path = require("path");
 
+const express = require("express");
 const bodyParser = require("body-parser");
+const { engine } = require("express-handlebars");
 
 const app = express();
+
+// handlebars
+app.engine(
+  "hbs",
+  engine({
+    layoutsDir: "views/layouts",
+    defaultLayout: "main-layout",
+    extname: ".hbs",
+  })
+);
 
 const rootdir = require("./utils/path");
 
@@ -14,7 +24,12 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootdir, "public")));
 
-app.set("view engine", "pug");
+// handlebars
+app.set("view engine", "hbs");
+
+// pug
+// app.set("view engine", "pug");
+
 app.set("views", "views");
 
 app.use("/admin", adminRoutes.routes);
