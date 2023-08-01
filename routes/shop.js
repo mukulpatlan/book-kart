@@ -3,10 +3,21 @@ const express = require("express");
 
 const router = express.Router();
 
-const { getProducts } = require("../controllers/products");
+const {
+  getProducts,
+  getIndex,
+  getCart,
+  getCheckout,
+  getOrders,
+} = require("../controllers/shop");
 
 // handlebars/ejs route
 router.get("/", getProducts);
+router.get("/products", getIndex);
+router.get("/cart", getCart);
+router.get("/orders", getOrders);
+router.get("/checkout", getCheckout);
+router.get("/product/:id", getProducts);
 
 // pug route
 // router.get("/", (req, res, next) => {
