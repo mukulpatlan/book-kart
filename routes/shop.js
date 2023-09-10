@@ -12,6 +12,7 @@ const {
   getProductDetails,
   postCart,
   postDeleteCartItem,
+  postOrder
 } = require("../controllers/shop");
 
 // handlebars/ejs route
@@ -24,6 +25,8 @@ router.get("/orders", getOrders);
 router.get("/checkout", getCheckout);
 router.get("/products/delete");
 router.get("/products/:productId", getProductDetails);
+router.get('/orders', getOrders);
+router.post('/create-order', postOrder);
 
 // pug route
 // router.get("/", (req, res, next) => {

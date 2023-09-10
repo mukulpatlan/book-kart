@@ -2,42 +2,38 @@ const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
-// const { engine } = require("express-handlebars");
-
-const app = express();
-
-// app.engine(
-//   "hbs",
-//   engine({
-//     layoutsDir: "views/layouts",
-//     defaultLayout: "main-layout",
-//     extname: ".hbs",
-//   })
-// );
-
 const rootdir = require("./utils/path");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const errorCtrl = require("./controllers/error");
+const User = require("./models/user");
+const db = require("./utils/database");
+const {mongoConnect} = require("./utils/database");
+
+const app = express();
+
+// ejs
+app.set("view engine", "ejs");
+app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootdir, "public")));
 
-// ejs
-app.set("view engine", "ejs");
+app.use((req, res, next) => {
+    User.findById("64fd904ee9e16831e0dfb7b2").then(user => {
+        req.user = new User(user._id, user.userName, user.email, user.cart);
+        next();
+    }).catch(err => console.log(err));
+})
 
-// handlebars
-// app.set("view engine", "hbs");
-
-// pug
-// app.set("view engine", "pug");
-
-app.set("views", "views");
+// db.end()
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 app.use(errorCtrl.get404Ctrl);
 
-app.listen(3000);
+mongoConnect(client => {
+    app.listen(3000);
+})

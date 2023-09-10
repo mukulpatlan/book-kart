@@ -9,7 +9,7 @@ exports.getAddProducts = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll((products) => {
+  Product.fetchAll().then((products) => {
     res.render("admin/products", {
       pageTitle: "Admin Products",
       path: "/admin/products",
@@ -19,19 +19,33 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const { productId, title, imageUrl, price, description } = req.body;
-  const product = new Product(productId, title, imageUrl, price, description);
-  product.save();
-  res.redirect("/admin/products");
+  const {
+    productId,
+    title,
+    imageUrl,
+    price,
+    description
+  } = req.body;
+  const product = new Product(
+    productId,
+    title,
+    imageUrl,
+    price,
+    description
+  );
+  product.save().then((result) => {
+    console.log("saved");
+    res.redirect("/admin/products");
+  });
 };
 
 exports.getEditProduct = (req, res, next) => {
   const isEdit = req.query.edit === "true";
   if (!isEdit) {
-    res.redirect("/");
+    return res.redirect("/");
   }
   const prodId = req.params.productId;
-  Product.findByID(prodId, (prod) => {
+  Product.findByID(prodId).then((prod) => {
     if (!prod) {
       return res.redirect("/");
     }
@@ -46,14 +60,25 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.deleteProducts = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.delete(prodId, (prod) => {
+  Product.delete(prodId).then(() => {
     res.redirect("/admin/products");
   });
 };
 
 exports.postAddProducts = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(null, title, imageUrl, price, description);
-  product.save();
-  res.redirect("/");
+  const product = new Product(
+    null,
+    title,
+    imageUrl,
+    price,
+    description,
+    req.user._id
+  );
+  product
+    .save()
+    .then((result) => {
+      res.redirect("/");
+    })
+    .catch((err) => console.log(err));
 };
