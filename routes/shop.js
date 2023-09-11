@@ -22,10 +22,10 @@ router.get("/cart", getCart);
 router.post("/cart", postCart);
 router.post("/cart-item-delete", postDeleteCartItem);
 router.get("/orders", getOrders);
-router.get("/checkout", getCheckout);
-router.get("/products/delete");
+// router.get("/checkout", getCheckout);
+// router.get("/products/delete");
 router.get("/products/:productId", getProductDetails);
-router.get('/orders', getOrders);
+// router.get('/orders', getOrders);
 router.post('/create-order', postOrder);
 
 // pug route
