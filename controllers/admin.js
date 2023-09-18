@@ -9,7 +9,7 @@ exports.getAddProducts = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll().then((products) => {
+  Product.find().then((products) => {
     res.render("admin/products", {
       pageTitle: "Admin Products",
       path: "/admin/products",
@@ -19,23 +19,16 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const {
-    productId,
-    title,
-    imageUrl,
-    price,
-    description
-  } = req.body;
-  const product = new Product(
-    productId,
-    title,
-    imageUrl,
-    price,
-    description
-  );
-  product.save().then((result) => {
-    console.log("saved");
-    res.redirect("/admin/products");
+  const { productId, title, imageUrl, price, description } = req.body;
+  Product.findById(productId).then(product => {
+    product.title = title;
+    product.imageUrl = imageUrl;
+    product.price = price;
+    product.description = description;
+    product.save().then((result) => {
+      console.log("saved");
+      res.redirect("/admin/products");
+    });
   });
 };
 
@@ -45,7 +38,7 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect("/");
   }
   const prodId = req.params.productId;
-  Product.findByID(prodId).then((prod) => {
+  Product.findById(prodId).then((prod) => {
     if (!prod) {
       return res.redirect("/");
     }
@@ -60,21 +53,20 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.deleteProducts = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.delete(prodId).then(() => {
+  Product.findByIdAndRemove(prodId).then(() => {
     res.redirect("/admin/products");
   });
 };
 
 exports.postAddProducts = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(
-    null,
-    title,
-    imageUrl,
-    price,
-    description,
-    req.user._id
-  );
+  const product = new Product({
+    title: title,
+    imageUrl: imageUrl,
+    price: price,
+    description: description,
+    userId: req.user
+  });
   product
     .save()
     .then((result) => {
