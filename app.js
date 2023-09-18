@@ -6,22 +6,39 @@ const rootdir = require("./utils/path");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+const authRoutes = require("./routes/auth");
 const errorCtrl = require("./controllers/error");
 const User = require("./models/user");
 const { default: mongoose } = require("mongoose");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
+
+const MONGODB_URI =
+  "mongodb+srv://mukulviket:UvJn7eJ3cpuj2NMX@cluster0.4hgdz.mongodb.net/book_kart";
 // const {mongoConnect} = require("./utils/database");
 
 const app = express();
-
+const store = new MongoDBStore({ uri: MONGODB_URI, collection: "sessions" });
 // ejs
 app.set("view engine", "ejs");
 app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootdir, "public")));
+app.use(
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    store: store
+  })
+);
 
 app.use((req, res, next) => {
-  User.findById("64fe0c4918d5ba68e92b2e46")
+  if(!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
@@ -31,13 +48,12 @@ app.use((req, res, next) => {
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(errorCtrl.get404Ctrl);
 
 mongoose
-  .connect(
-    "mongodb+srv://mukulviket:MxhoKRKTjU81z3d2@cluster0.4hgdz.mongodb.net/book_kart?retryWrites=true&w=majority"
-  )
+  .connect(MONGODB_URI)
   .then(() => {
     console.log("connected");
     User.findOne().then((user) => {

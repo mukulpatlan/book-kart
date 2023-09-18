@@ -16,7 +16,9 @@
                             <p>
                                 <%= prod.description %>
                             </p>
-                            <%- include('../includes/add-to-cart') %>
+                            <% if(isAuthenticated) { %>
+                                <%- include('../includes/add-to-cart') %>
+                            <% } %>
                 </div>
                 </h1>
             </main>
