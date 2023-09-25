@@ -8,6 +8,7 @@ exports.getProducts = (req, res, next) => {
       pageTitle: "All Products",
       prods: products,
       path: "/products",
+      isAuthenticated: req.session.isLoggedIn,
     });
   });
 };
@@ -19,6 +20,7 @@ exports.getProductDetails = (req, res, next) => {
       pageTitle: "Product Details",
       path: "/products",
       prod: product,
+      isAuthenticated: req.session.isLoggedIn,
     });
   });
 };
@@ -29,6 +31,7 @@ exports.getIndex = (req, res, next) => {
       pageTitle: "Shop",
       prods: products,
       path: "/",
+      isAuthenticated: req.session.isLoggedIn,
     });
   });
 };
@@ -42,6 +45,7 @@ exports.getCart = (req, res, next) => {
         pageTitle: "Your Cart",
         cart: cart,
         path: "/cart",
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -62,10 +66,8 @@ exports.postCart = (req, res, next) => {
 
 exports.postDeleteCartItem = (req, res, next) => {
   const id = req.body.productId;
-  Product.findById(id)
-    .then((product) => {
-      return req.user.postDeleteCartItem(product);
-    })
+  req.user
+    .postDeleteCartItem(id)
     .then(() => {
       console.log("deleted");
       res.redirect("/cart");
@@ -85,8 +87,8 @@ exports.postOrder = (req, res, next) => {
       });
       const order = new Order({
         user: {
-          name: req.user.userName,
-          userId: req.user,
+          name: req.session.user.userName,
+          userId: req.session.user,
         },
         products: products,
         total: user.cart.total,
@@ -94,7 +96,7 @@ exports.postOrder = (req, res, next) => {
       return order.save();
     })
     .then((result) => {
-      return req.user.clearCart();
+      return req.session.user.clearCart();
     })
     .then((result) => {
       res.redirect("/orders");
@@ -103,12 +105,13 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  Order.find({ "user.userId": req.user._id })
+  Order.find({ "user.userId": req.session.user._id })
     .then((orders) => {
       res.render("shop/orders", {
         path: "/orders",
         pageTitle: "Your Orders",
         orders: orders,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -120,6 +123,7 @@ exports.getCheckout = (req, res, next) => {
       pageTitle: "Checkout",
       prods: products,
       path: "/checkout",
+      isAuthenticated: req.session.isLoggedIn,
     });
   });
 };
