@@ -2,11 +2,11 @@ const { Schema, model } = require("mongoose");
 
 const userSchema = new Schema(
   {
-    userName: {
+    email: {
       type: String,
       required: true,
     },
-    email: {
+    password: {
       type: String,
       required: true,
     },
@@ -63,7 +63,7 @@ userSchema.methods.postDeleteCartItem = function (product) {
   const qty = this.cart.items.find(
     (i) => i.productId.toString() === product._id.toString()
   ).quantity;
-  this.cart.total = (this.cart.total - (product.price * qty)).toFixed(2);
+  this.cart.total = (this.cart.total - product.price * qty).toFixed(2);
   this.cart.items = udpatedCartItems;
   return this.save();
 };
