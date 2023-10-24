@@ -7,36 +7,48 @@
         <%- include('../includes/navigation.ejs') %>
 
             <main>
-                <form class="product-form"
-                    action="/admin/<% if(editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST">
-                    <div class="form-control">
-                        <label for="title">Title</label>
-                        <input type="text" name="title" id="title" value="<% if(editing) { %><%=prod.title%><% } %>">
+                <% if(err) { %>
+                    <div class="user-message user-message--error">
+                        <%= errMsg %>
                     </div>
-                    <div class="form-control">
-                        <label for="imageUrl">Image URL</label>
-                        <input type="text" name="imageUrl" id="imageUrl"
-                            value="<% if(editing) { %><%= prod.imageUrl %><% } %>">
-                    </div>
-                    <div class="form-control">
-                        <label for="price">Price</label>
-                        <input type="number" name="price" id="price" step="0.01"
-                            value="<% if(editing) { %><%= prod.price %><% } %>">
-                    </div>
-                    <div class="form-control">
-                        <label for="description">Description</label>
-                        <textarea name="description" id="description"
-                            rows="5"><% if(editing) { %><%= prod.description%><% } %></textarea>
-                    </div>
+                    <% } %>
+                        <form class="product-form"
+                            action="/admin/<% if(editing) { %>edit-product<% } else { %>add-product<% } %>"
+                            method="POST">
+                            <div class="form-control">
+                                <label for="title">Title</label>
+                                <input class=="<% errors.filter(e => e.params.title).length > 0 ? 'invalid': '' %>"
+                                    type="text" name="title" id="title"
+                                    value="<% if(editing || hasError) { %><%=prod.title%><% } %>">
+                            </div>
+                            <div class="form-control">
+                                <label for="imageUrl">Image URL</label>
+                                <input class=="<% errors.filter(e => e.params.imageUrl).length > 0 ? 'invalid': '' %>"
+                                    type="text" name="imageUrl" id="imageUrl"
+                                    value="<% if(editing || hasError) { %><%= prod.imageUrl %><% } %>">
+                            </div>
+                            <div class="form-control">
+                                <label for="price">Price</label>
+                                <input class=="<% errors.filter(e => e.params.price).length > 0 ? 'invalid': '' %>"
+                                    type="number" name="price" id="price" step="0.01"
+                                    value="<% if(editing || hasError) { %><%= prod.price %><% } %>">
+                            </div>
+                            <div class="form-control">
+                                <label for="description">Description</label>
+                                <textarea
+                                    class=="<% errors.filter(e => e.params.description).length > 0 ? 'invalid': '' %>"
+                                    name="description" id="description"
+                                    rows="5"><% if(editing || hasError) { %><%= prod.description%><% } %></textarea>
+                            </div>
 
-                    <% if(editing) { %>
-                        <input type="hidden" name="productId" id="productId" value="<%= prod._id%>">
-                        <% } %>
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <% if(editing) { %>
+                                <input type="hidden" name="productId" id="productId" value="<%= prod._id%>">
+                                <% } %>
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-                            <button class="btn" type="submit">
-                                <% if(editing) { %>Update Product<% } else { %>Add Product <% } %>
-                            </button>
-                </form>
+                                    <button class="btn" type="submit">
+                                        <% if(editing) { %>Update Product<% } else { %>Add Product <% } %>
+                                    </button>
+                        </form>
             </main>
             <%- include('../includes/end.ejs') %>

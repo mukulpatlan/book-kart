@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const Product = require("../models/product");
 
 exports.getAddProducts = (req, res, next) => {
@@ -5,6 +6,15 @@ exports.getAddProducts = (req, res, next) => {
     pageTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
+    product: {
+      title: "",
+      imageUrl: "",
+      price: "",
+      description: "",
+    },
+    errMsg: null,
+    hasError: false,
+    errors: [],
   });
 };
 
@@ -20,6 +30,18 @@ exports.getProducts = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: true,
+      prod: prod,
+      hasError: true,
+      errMsg: errors.array()[0].msg,
+      errors: errors.array(),
+    });
+  }
   Product.findById(productId).then((product) => {
     product.title = title;
     product.imageUrl = imageUrl;
@@ -47,6 +69,9 @@ exports.getEditProduct = (req, res, next) => {
       path: "/admin/edit-product",
       editing: isEdit,
       prod: prod,
+      hasError: false,
+      errMsg: null,
+      errors: [],
     });
   });
 };
@@ -60,6 +85,23 @@ exports.deleteProducts = (req, res, next) => {
 
 exports.postAddProducts = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/edit-product",
+      editing: false,
+      prod: {
+        title: title,
+        imageUrl: imageUrl,
+        price: price,
+        description: description,
+      },
+      hasError: true,
+      errMsg: errors.array()[0].msg,
+      errors: errors.array(),
+    });
+  }
   const product = new Product({
     title: title,
     imageUrl: imageUrl,

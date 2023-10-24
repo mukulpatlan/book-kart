@@ -13,10 +13,9 @@ const { default: mongoose } = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
-const flash = require('connect-flash');
+const flash = require("connect-flash");
 
-const MONGODB_URI =
-  "mongodb+srv://mukulviket:UvJn7eJ3cpuj2NMX@cluster0.4hgdz.mongodb.net/book_kart";
+const MONGODB_URI = process.env.mongo;
 // const {mongoConnect} = require("./utils/database");
 
 const app = express();
