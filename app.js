@@ -9,8 +9,8 @@ const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 const errorCtrl = require("./controllers/error");
 const User = require("./models/user");
-const { default: mongoose } = require("mongoose");
 const session = require("express-session");
+const Mongoose = require("mongoose");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require('connect-flash');
@@ -55,16 +55,21 @@ app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
   next();
-});
+});22
 app.use(flash());
 
+app.get("/500", errorCtrl.get500Ctrl);
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.use((error, req, res, next) => {
+  res.redirect("/500");
+});
+
 app.use(errorCtrl.get404Ctrl);
 
-mongoose
+Mongoose
   .connect(MONGODB_URI)
   .then(() => {
     console.log("connected");

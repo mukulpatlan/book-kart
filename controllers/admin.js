@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Product = require("../models/product");
 
 exports.getAddProducts = (req, res, next) => {
@@ -72,5 +73,9 @@ exports.postAddProducts = (req, res, next) => {
     .then((result) => {
       res.redirect("/");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
